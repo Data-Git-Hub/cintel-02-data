@@ -11,8 +11,11 @@ ui.page_opts(title="Penguins are Cool", fillable=True)
 
 # (P2.1) Correct use of the layout with a sidebar
 with ui.layout_sidebar():
-    # (P2.1) Sidebar content
+    # (P2.1)Sidebar content
     with ui.sidebar(open="open"):
+        # (P2.2) Add a second-level header inside the sidebar
+        ui.h2("Sidebar")  # <-- Added this line for the 2nd level header
+
         # (P2.1) Add input controls inside the sidebar
         ui.input_slider("num_bins", "Number of bins", min=10, max=50, value=20)
         ui.input_checkbox("show_tips", "Show tips data", value=True)
@@ -40,16 +43,14 @@ with ui.layout_sidebar():
                     penguins_df, x="bill_length_mm", nbins=input.num_bins()
                 )
 
-######## P2 Requirements
 
-# Use the ui.h2() function to add a 2nd level header to the sidebar
-#   pass in a string argument (in quotes) to set the header text to "Sidebar"
+######## P2 Requirements
 
 # Use ui.input_selectize() to create a dropdown input to choose a column
 #   pass in three arguments:
 #   the name of the input (in quotes), e.g., "selected_attribute"
 #   the label for the input (in quotes)
-#   a list of options for the input (in square brackets) 
+#   a list of options for the input (in square brackets)
 #   e.g. ["bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"]
 
 # Use ui.input_numeric() to create a numeric input for the number of Plotly histogram bins
