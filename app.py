@@ -20,6 +20,30 @@ with ui.layout_sidebar():
         ui.input_slider("num_bins", "Number of bins", min=10, max=50, value=20)
         ui.input_checkbox("show_tips", "Show tips data", value=True)
 
+        # (P2.3) Add first dropdown input using input_selectize() for plot1
+        ui.input_selectize(
+            "selected_attribute_1",  # (P2.3) Name of the input for plot1
+            "Choose an attribute for Plot 1",  # (P2.3) Label for the input
+            [
+                "bill_length_mm",
+                "bill_depth_mm",
+                "flipper_length_mm",
+                "body_mass_g",
+            ],  # (P2.3) List of options for the dropdown
+        )
+
+        # (P2.3) Add second dropdown input using input_selectize() for plot2
+        ui.input_selectize(
+            "selected_attribute_2",  # (P2.3) Name of the input for plot2
+            "Choose an attribute for Plot 2",  # (P2.3) Label for the input
+            [
+                "bill_length_mm",
+                "bill_depth_mm",
+                "flipper_length_mm",
+                "body_mass_g",
+            ],  # (P2.3) List of options for the dropdown
+        )
+
     # (P2.1) Main layout (content area next to the sidebar)
     with ui.layout_columns():
 
@@ -29,8 +53,8 @@ with ui.layout_sidebar():
                 return px.histogram(px.data.tips(), y="tip", nbins=input.num_bins())
             else:
                 return px.histogram(
-                    penguins_df, x="flipper_length_mm", nbins=input.num_bins()
-                )
+                    penguins_df, x=input.selected_attribute_1(), nbins=input.num_bins()
+                )  # <-- Uses the selected attribute from the first dropdown (selected_attribute_1)
 
         @render_plotly
         def plot2():
@@ -40,18 +64,10 @@ with ui.layout_sidebar():
                 )
             else:
                 return px.histogram(
-                    penguins_df, x="bill_length_mm", nbins=input.num_bins()
-                )
-
+                    penguins_df, x=input.selected_attribute_2(), nbins=input.num_bins()
+                )  # <-- Uses the selected attribute from the second dropdown (selected_attribute_2)
 
 ######## P2 Requirements
-
-# Use ui.input_selectize() to create a dropdown input to choose a column
-#   pass in three arguments:
-#   the name of the input (in quotes), e.g., "selected_attribute"
-#   the label for the input (in quotes)
-#   a list of options for the input (in square brackets)
-#   e.g. ["bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"]
 
 # Use ui.input_numeric() to create a numeric input for the number of Plotly histogram bins
 #   pass in two arguments:
