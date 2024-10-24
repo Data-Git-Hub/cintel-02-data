@@ -1,29 +1,46 @@
 import plotly.express as px
 from shiny.express import input, ui
 from shinywidgets import render_plotly
-# (1.0) This package provides the Palmer Penguins dataset
 import palmerpenguins
 
-# (1.0) Use the built-in function to load the Palmer Penguins dataset
+# (1.0) This package provides the Palmer Penguins dataset
 penguins_df = palmerpenguins.load_penguins()
 
+# (1.0) Add a sidebar for user interaction
 ui.page_opts(title="Penguins are Cool", fillable=True)
-with ui.layout_columns():
 
-    @render_plotly
-    def plot1():
-        return px.histogram(px.data.tips(), y="tip")
+# (P2.1) Correct use of the layout with a sidebar
+with ui.layout_sidebar():
+    # (P2.1) Sidebar content
+    with ui.sidebar(open="open"):
+        # (P2.1) Add input controls inside the sidebar
+        ui.input_slider("num_bins", "Number of bins", min=10, max=50, value=20)
+        ui.input_checkbox("show_tips", "Show tips data", value=True)
 
-    @render_plotly
-    def plot2():
-        return px.histogram(px.data.tips(), y="total_bill")
+    # (P2.1) Main layout (content area next to the sidebar)
+    with ui.layout_columns():
+
+        @render_plotly
+        def plot1():
+            if input.show_tips():
+                return px.histogram(px.data.tips(), y="tip", nbins=input.num_bins())
+            else:
+                return px.histogram(
+                    penguins_df, x="flipper_length_mm", nbins=input.num_bins()
+                )
+
+        @render_plotly
+        def plot2():
+            if input.show_tips():
+                return px.histogram(
+                    px.data.tips(), y="total_bill", nbins=input.num_bins()
+                )
+            else:
+                return px.histogram(
+                    penguins_df, x="bill_length_mm", nbins=input.num_bins()
+                )
 
 ######## P2 Requirements
-# Add a Shiny UI sidebar for user interaction
-# Use the ui.sidebar() function to create a sidebar
-# Set the open parameter to "open" to make the sidebar open by default
-# Use a with block to add content to the sidebar
-
 
 # Use the ui.h2() function to add a 2nd level header to the sidebar
 #   pass in a string argument (in quotes) to set the header text to "Sidebar"
