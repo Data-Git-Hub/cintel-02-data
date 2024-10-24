@@ -30,18 +30,24 @@ with ui.layout_sidebar():  # (P2.1) Create sidebar layout for user interaction
             ],  # (P2.3) list of options for the input
         )
 
+        # (P2.4) Use ui.input_numeric() to create a numeric input for the number of Plotly histogram bins
+        ui.input_numeric(
+            "plotly_bin_count",  # (P2.4) the name of the input
+            "Number of Bins",  # (P2.4) the label for the input
+            value=30,  # Set a default value for the number of bins
+        )
+
     @render_plotly
     def plot1():
-        # (P2.4) Dynamically update the plot based on selected attribute
+        # (P2.4) Dynamically update the plot based on selected attribute and number of bins
         selected_column = input.selected_attribute()  # Retrieve the selected attribute
-        return px.histogram(penguins_df, x=selected_column)
+        bin_count = (
+            input.plotly_bin_count()
+        )  # Retrieve the number of bins from numeric input
+        return px.histogram(penguins_df, x=selected_column, nbins=bin_count)
+
 
 ##### P2
-
-#   (P2.4) Use ui.input_numeric() to create a numeric input for the number of Plotly histogram bins
-#   (P2.4) pass in two arguments:
-#   (P2.4) the name of the input (in quotes), e.g. "plotly_bin_count"
-#   (P2.4) the label for the input (in quotes)
 
 #   (P2.5) Use ui.input_slider() to create a slider input for the number of Seaborn bins
 #   (P2.5) pass in four arguments:
