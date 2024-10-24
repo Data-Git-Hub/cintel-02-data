@@ -1,14 +1,17 @@
 import plotly.express as px
 from shiny.express import input, ui
 from shinywidgets import render_plotly
-# (1.0) This package provides the Palmer Penguins dataset
 import palmerpenguins
 
-# (1.0) Use the built-in function to load the Palmer Penguins dataset
+# (1.0) This package provides the Palmer Penguins dataset
 penguins_df = palmerpenguins.load_penguins()
 
+# (P2.1) Add a Shiny UI sidebar for user interaction
 ui.page_opts(title="Penguins are Cool", fillable=True)
-with ui.layout_columns():
+
+# (P2.1) Use the ui.sidebar() function to create a sidebar
+with ui.layout_sidebar():  # (P2.1) Create sidebar layout for user interaction
+    ui.sidebar()  # (P2.1) Sidebar without arguments
 
     @render_plotly
     def plot1():
@@ -19,12 +22,6 @@ with ui.layout_columns():
         return px.histogram(px.data.tips(), y="total_bill")
 
 ##### P2
-
-#   (P2.1) Add a Shiny UI sidebar for user interaction
-#   (P2.1)Use the ui.sidebar() function to create a sidebar
-#   (P2.1)Set the open parameter to "open" to make the sidebar open by default
-#   (P2.1)Use a with block to add content to the sidebar
-
 
 #   (P2.2) Use the ui.h2() function to add a 2nd level header to the sidebar
 #   (P2.2) pass in a string argument (in quotes) to set the header text to "Sidebar"
