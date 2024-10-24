@@ -11,7 +11,12 @@ ui.page_opts(title="Penguins are Cool", fillable=True)
 
 # (P2.1) Use the ui.sidebar() function to create a sidebar
 with ui.layout_sidebar():  # (P2.1) Create sidebar layout for user interaction
-    ui.sidebar()  # (P2.1) Sidebar without arguments
+    with ui.sidebar():  # (P2.1) Sidebar layout block
+
+        # (P2.2) Use the ui.h2() function to add a 2nd level header to the sidebar
+        ui.h2(
+            "Sidebar"
+        )  # (P2.2) pass in a string argument (in quotes) to set the header text to "Sidebar"
 
     @render_plotly
     def plot1():
@@ -22,9 +27,6 @@ with ui.layout_sidebar():  # (P2.1) Create sidebar layout for user interaction
         return px.histogram(px.data.tips(), y="total_bill")
 
 ##### P2
-
-#   (P2.2) Use the ui.h2() function to add a 2nd level header to the sidebar
-#   (P2.2) pass in a string argument (in quotes) to set the header text to "Sidebar"
 
 #   (P2.3) Use ui.input_selectize() to create a dropdown input to choose a column
 #   (P2.3) pass in three arguments:
