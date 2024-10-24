@@ -51,6 +51,15 @@ with ui.layout_sidebar():
             20,  # <-- Set a default value of 20 for plotly_bin_count
         )
 
+        # (P2.5) Add a slider input for the number of Seaborn bins
+        ui.input_slider(
+            "seaborn_bin_count",  # (P2.5) Name of the input
+            "Number of bins for Seaborn histograms",  # (P2.5) Label for the input
+            5,  # (P2.5) Minimum value for the input
+            50,  # (P2.5) Maximum value for the input
+            20,  # (P2.5) Default value for the input
+        )
+
     # (P2.1) Main layout (content area next to the sidebar)
     with ui.layout_columns():
 
@@ -113,17 +122,8 @@ with ui.layout_sidebar():
                 ).update_traces(marker_line_color="black", marker_line_width=1.5)
 
 
-
 ######## P2 Requirements
 
-
-# Use ui.input_slider() to create a slider input for the number of Seaborn bins
-#   pass in four arguments:
-#   the name of the input (in quotes), e.g. "seaborn_bin_count"
-#   the label for the input (in quotes)
-#   the minimum value for the input (as an integer)
-#   the maximum value for the input (as an integer)
-#   the default value for the input (as an integer)
 
 # Use ui.input_checkbox_group() to create a checkbox group input to filter the species
 #   pass in five arguments:
