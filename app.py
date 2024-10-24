@@ -44,35 +44,78 @@ with ui.layout_sidebar():
             ],  # (P2.3) List of options for the dropdown
         )
 
+        # (P2.4) Add a numeric input for the number of Plotly histogram bins
+        ui.input_numeric(
+            "plotly_bin_count",  # (P2.4) Name of the input
+            "Number of bins for histograms",
+            20,  # <-- Set a default value of 20 for plotly_bin_count
+        )
+
     # (P2.1) Main layout (content area next to the sidebar)
     with ui.layout_columns():
 
         @render_plotly
         def plot1():
+            # Handle cases where the numeric input might be None or invalid
+            bin_count = (
+                input.plotly_bin_count() or 20
+            )  # Set a fallback default value of 20
             if input.show_tips():
-                return px.histogram(px.data.tips(), y="tip", nbins=input.num_bins())
+                return px.histogram(
+                    px.data.tips(),
+                    y="tip",
+                    nbins=bin_count,
+                    color_discrete_sequence=[
+                        "blue"
+                    ],  # Blue color for the first histogram
+                    histnorm="",
+                    opacity=0.75,
+                ).update_traces(marker_line_color="black", marker_line_width=1.5)
             else:
                 return px.histogram(
-                    penguins_df, x=input.selected_attribute_1(), nbins=input.num_bins()
-                )  # <-- Uses the selected attribute from the first dropdown (selected_attribute_1)
+                    penguins_df,
+                    x=input.selected_attribute_1(),
+                    nbins=bin_count,
+                    color_discrete_sequence=[
+                        "blue"
+                    ],  # Blue color for the first histogram
+                    histnorm="",
+                    opacity=0.75,
+                ).update_traces(marker_line_color="black", marker_line_width=1.5)
 
         @render_plotly
         def plot2():
+            # Handle cases where the numeric input might be None or invalid
+            bin_count = (
+                input.plotly_bin_count() or 20
+            )  # Set a fallback default value of 20
             if input.show_tips():
                 return px.histogram(
-                    px.data.tips(), y="total_bill", nbins=input.num_bins()
-                )
+                    px.data.tips(),
+                    y="total_bill",
+                    nbins=bin_count,
+                    color_discrete_sequence=[
+                        "red"
+                    ],  # Red color for the second histogram
+                    histnorm="",
+                    opacity=0.75,
+                ).update_traces(marker_line_color="black", marker_line_width=1.5)
             else:
                 return px.histogram(
-                    penguins_df, x=input.selected_attribute_2(), nbins=input.num_bins()
-                )  # <-- Uses the selected attribute from the second dropdown (selected_attribute_2)
+                    penguins_df,
+                    x=input.selected_attribute_2(),
+                    nbins=bin_count,
+                    color_discrete_sequence=[
+                        "red"
+                    ],  # Red color for the second histogram
+                    histnorm="",
+                    opacity=0.75,
+                ).update_traces(marker_line_color="black", marker_line_width=1.5)
+
+
 
 ######## P2 Requirements
 
-# Use ui.input_numeric() to create a numeric input for the number of Plotly histogram bins
-#   pass in two arguments:
-#   the name of the input (in quotes), e.g. "plotly_bin_count"
-#   the label for the input (in quotes)
 
 # Use ui.input_slider() to create a slider input for the number of Seaborn bins
 #   pass in four arguments:
