@@ -18,22 +18,25 @@ with ui.layout_sidebar():  # (P2.1) Create sidebar layout for user interaction
             "Sidebar"
         )  # (P2.2) pass in a string argument (in quotes) to set the header text to "Sidebar"
 
+        # (P2.3) Use ui.input_selectize() to create a dropdown input to choose a column
+        ui.input_selectize(
+            "selected_attribute",  # (P2.3) the name of the input
+            "Choose Attribute",  # (P2.3) the label for the input
+            [
+                "bill_length_mm",
+                "bill_depth_mm",
+                "flipper_length_mm",
+                "body_mass_g",
+            ],  # (P2.3) list of options for the input
+        )
+
     @render_plotly
     def plot1():
-        return px.histogram(px.data.tips(), y="tip")
-
-    @render_plotly
-    def plot2():
-        return px.histogram(px.data.tips(), y="total_bill")
+        # (P2.4) Dynamically update the plot based on selected attribute
+        selected_column = input.selected_attribute()  # Retrieve the selected attribute
+        return px.histogram(penguins_df, x=selected_column)
 
 ##### P2
-
-#   (P2.3) Use ui.input_selectize() to create a dropdown input to choose a column
-#   (P2.3) pass in three arguments:
-#   (P2.3) the name of the input (in quotes), e.g., "selected_attribute"
-#   (P2.3) the label for the input (in quotes)
-#   (P2.3) a list of options for the input (in square brackets) 
-#   (P2.3) e.g. ["bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"]
 
 #   (P2.4) Use ui.input_numeric() to create a numeric input for the number of Plotly histogram bins
 #   (P2.4) pass in two arguments:
