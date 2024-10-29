@@ -1,50 +1,20 @@
 import plotly.express as px
 from shiny.express import input, ui
-from shinywidgets import render_plotly
-import palmerpenguins
+from shinywidgets import render_plotly, output_widget, render_widget
+from palmerpenguins import load_penguins as pp
+import seaborn as sns
+from shiny import render 
 
-# (1.0) This package provides the Palmer Penguins dataset
-penguins_df = palmerpenguins.load_penguins()
-
-# (P2.1) Add a Shiny UI sidebar for user interaction
-ui.page_opts(title="Penguins are Cool", fillable=True)
-
-# (P2.1) Use the ui.sidebar() function to create a sidebar
-with ui.layout_sidebar():  # (P2.1) Create sidebar layout for user interaction
-    with ui.sidebar():  # (P2.1) Sidebar layout block
-
-        # (P2.2) Use the ui.h2() function to add a 2nd level header to the sidebar
-        ui.h2(
-            "Sidebar"
-        )  # (P2.2) pass in a string argument (in quotes) to set the header text to "Sidebar"
-
-        # (P2.3) Use ui.input_selectize() to create a dropdown input to choose a column
-        ui.input_selectize(
-            "selected_attribute",  # (P2.3) the name of the input
-            "Choose Attribute",  # (P2.3) the label for the input
-            [
-                "bill_length_mm",
-                "bill_depth_mm",
-                "flipper_length_mm",
-                "body_mass_g",
-            ],  # (P2.3) list of options for the input
-        )
-
-        # (P2.4) Use ui.input_numeric() to create a numeric input for the number of Plotly histogram bins
-        ui.input_numeric(
-            "plotly_bin_count",  # (P2.4) the name of the input
-            "Number of Bins",  # (P2.4) the label for the input
-            value=30,  # Set a default value for the number of bins
-        )
+ui.page_opts(title="Filling layout", fillable=True)
+with ui.layout_columns():
 
     @render_plotly
     def plot1():
-        # (P2.4) Dynamically update the plot based on selected attribute and number of bins
-        selected_column = input.selected_attribute()  # Retrieve the selected attribute
-        bin_count = (
-            input.plotly_bin_count()
-        )  # Retrieve the number of bins from numeric input
-        return px.histogram(penguins_df, x=selected_column, nbins=bin_count)
+        return px.histogram(px.data.tips(), y="tip")
+
+    @render_plotly
+    def plot2():
+        return px.histogram(px.data.tips(), y="total_bill")
 
 
 ##### P2
