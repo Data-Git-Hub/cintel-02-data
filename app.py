@@ -3,6 +3,7 @@ from shiny.express import input, ui
 from shinywidgets import render_plotly
 from palmerpenguins import load_penguins
 import seaborn as sns
+import matplotlib.pyplot as plt
 from shiny import render
 
 # Load the palmerpenguins dataset
@@ -12,89 +13,89 @@ penguins = load_penguins()
 ui.page_opts(title="Penguins are Cool", fillable=True)
 
 # (P2.1) Add a Shiny UI sidebar for user interaction
-with ui.sidebar(
-    open="open"
-):  # (P2.1) Set open parameter to "open" to make sidebar open by default
-    ui.h2("Sidebar")  # (P2.2) Add a second-level header with the text "Sidebar"
+with ui.sidebar(open="open"):
+    ui.h2("Sidebar")
 
-    # (P2.1) Add a slider for filtering bill length data
-    ui.input_slider(
-        "slider", "Max Bill Length (mm)", min=33, max=60, value=45
-    )  # Initial slider setup
+    # (P2.1) Slider for filtering bill length data
+    ui.input_slider("slider", "Max Bill Length (mm)", min=33, max=60, value=45)
 
-    # (P2.3) Use ui.input_selectize() to create a dropdown input to choose a column
+    # (P2.3) Dropdown to choose a column attribute
     ui.input_selectize(
-        "selected_attribute",  # Name of the input
-        "Choose an Attribute",  # Label for the input
-        [
-            "bill_length_mm",
-            "bill_depth_mm",
-            "flipper_length_mm",
-            "body_mass_g",
-        ],  # List of options
+        "selected_attribute",
+        "Choose an Attribute",
+        ["bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"],
     )
 
-    # (P2.4) Use ui.input_numeric() to create a numeric input for the number of Plotly histogram bins
-    ui.input_numeric(
-        "plotly_bin_count",  # Name of the input
-        "Number of Plotly Bins",  # Label for the input
-        value=10,  # Default value for the number of bins
+    # (P2.4) Numeric input for number of Plotly histogram bins
+    ui.input_numeric("plotly_bin_count", "Number of Plotly Bins", value=10)
+
+    #  (P2.5) Use ui.input_slider() to create a slider input for the number of Seaborn bins
+    #  (P2.5) the minimum value for the input (as an integer)
+    #  (P2.5) the maximum value for the input (as an integer)
+    #  (P2.5) the default value for the input (as an integer)
+    ui.input_slider(
+        "seaborn_bin_count", "Number of Seaborn Bins", min=5, max=50, value=20
     )
 
-# Define layout with separate render_plotly outputs for vertical stacking
+# Define layout with render_plotly outputs for vertical stacking
 with ui.layout_columns():
 
     @render_plotly
     def plot1():
-        # Filter the data based on the slider value
-        filtered_penguins = penguins[
-            penguins["bill_length_mm"] <= input.slider()
-        ]  # Filter data dynamically
+        # Filter data based on slider value
+        filtered_penguins = penguins[penguins["bill_length_mm"] <= input.slider()]
 
-        # Create a histogram with black outlines
+        # Plotly histogram for bill length
         fig = px.histogram(
             filtered_penguins,
             x="bill_length_mm",
             title="Penguins Bill Length Histogram",
         )
-
-        # Add black outline to each bar
         fig.update_traces(marker_line_color="black", marker_line_width=1.5)
-
         return fig
 
     @render_plotly
     def plot2():
-        # Get the selected attribute from the dropdown input
+        # Get selected attribute and bin count for Plotly histogram
         selected_attribute = input.selected_attribute()
-
-        # Use the numeric input for setting bins in plot2
         bin_count = input.plotly_bin_count() if input.plotly_bin_count() else None
 
-        # Create a second histogram based on the selected attribute
+        # Plotly histogram for selected attribute
         fig = px.histogram(
             penguins,
             x=selected_attribute,
             title=f"Penguins {selected_attribute.replace('_', ' ').title()} Histogram",
-            nbins=bin_count,  # Apply user-specified bin count to plot2
-            color_discrete_sequence=["red"],  # Set bars to red
+            nbins=bin_count,
+            color_discrete_sequence=["red"],
         )
-
-        # Add black outline to each bar
         fig.update_traces(marker_line_color="black", marker_line_width=1.5)
+        return fig
+
+
+# Add the Seaborn histogram inside a card component
+with ui.card():
+    ui.card_header("Seaborn Histogram")
+
+    #  (P2.5) the name of the input (in quotes), e.g. "seaborn_bin_count"
+    #  (P2.5) the label for the input (in quotes)
+    @render.plot
+    def plot3():
+        # Create Seaborn histogram using the selected attribute and bin count
+        fig, ax = plt.subplots()
+        sns.histplot(
+            data=penguins,
+            x=input.selected_attribute(),
+            bins=input.seaborn_bin_count(),
+            ax=ax,
+        )
+        ax.set_title("Penguins Bill Length")
+        ax.set_xlabel(input.selected_attribute())
+        ax.set_ylabel("Count")
 
         return fig
 
 
 ##### P2
-
-#  (P2.5) Use ui.input_slider() to create a slider input for the number of Seaborn bins
-#  (P2.5) pass in four arguments:
-#  (P2.5) the name of the input (in quotes), e.g. "seaborn_bin_count"
-#  (P2.5) the label for the input (in quotes)
-#  (P2.5) the minimum value for the input (as an integer)
-#  (P2.5) the maximum value for the input (as an integer)
-#  (P2.5) the default value for the input (as an integer)
 
 #  (P2.6) Use ui.input_checkbox_group() to create a checkbox group input to filter the species
 #  (P2.6) pass in five arguments:
