@@ -16,6 +16,7 @@ ui.page_opts(title="Penguins are Cool", fillable=True)
 with ui.sidebar(
     open="open"
 ):  # (P2.1) Set open parameter to "open" to make sidebar open by default
+    ui.h2("Sidebar")  # (P2.2) Add a second-level header with the text "Sidebar"
     # (P2.1) Add a slider for filtering bill length data
     ui.input_slider(
         "slider", "Max Bill Length (mm)", min=33, max=60, value=45
@@ -45,9 +46,6 @@ with ui.layout_columns():
 
 
 ##### P2
-
-#  (P2.2) Use the ui.h2() function to add a 2nd level header to the sidebar
-#  (P2.2) pass in a string argument (in quotes) to set the header text to "Sidebar"
 
 #  (P2.3) Use ui.input_selectize() to create a dropdown input to choose a column
 #  (P2.3) pass in three arguments:
@@ -86,3 +84,4 @@ with ui.layout_columns():
 #  (P2.8) a keyword argument target= "_blank" to open the link in a new tab
 
 # When passing in multiple arguments to a function, separate them with commas.
+
