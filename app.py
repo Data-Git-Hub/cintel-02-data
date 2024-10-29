@@ -1,21 +1,29 @@
 import plotly.express as px
 from shiny.express import input, ui
-from shinywidgets import render_plotly, output_widget, render_widget
-from palmerpenguins import load_penguins as pp
+from shinywidgets import render_plotly
+from palmerpenguins import load_penguins
+from shinywidgets import output_widget, render_widget, render_plotly
 import seaborn as sns
-from shiny import render 
+from shiny import render
 
-ui.page_opts(title="Filling layout", fillable=True)
+# Load the palmerpenguins dataset
+penguins = load_penguins()
+
+# Set up the UI and layout
+ui.page_opts(title="Penguins are Cool", fillable=True)
 with ui.layout_columns():
 
     @render_plotly
     def plot1():
-        return px.histogram(px.data.tips(), y="tip")
-
-    @render_plotly
-    def plot2():
-        return px.histogram(px.data.tips(), y="total_bill")
-
+        # Create a histogram with black outlines
+        fig = px.histogram(
+            penguins, x="bill_length_mm", title="Penguins Bill Length Histogram"
+        )
+        
+        # Add black outline to each bar
+        fig.update_traces(marker_line_color="black", marker_line_width=1.5)
+        
+        return fig
 
 ##### P2
 
