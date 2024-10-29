@@ -22,6 +22,18 @@ with ui.sidebar(
         "slider", "Max Bill Length (mm)", min=33, max=60, value=45
     )  # Initial slider setup
 
+    # (P2.3) Use ui.input_selectize() to create a dropdown input to choose a column
+    ui.input_selectize(
+        "selected_attribute",  # Name of the input
+        "Choose an Attribute",  # Label for the input
+        [
+            "bill_length_mm",
+            "bill_depth_mm",
+            "flipper_length_mm",
+            "body_mass_g",
+        ],  # List of options
+    )
+
 # (P2.1) Define the layout columns
 with ui.layout_columns():
 
@@ -44,15 +56,26 @@ with ui.layout_columns():
 
         return fig
 
+    @render_plotly
+    def plot2():
+        # Get the selected attribute from the dropdown input
+        selected_attribute = input.selected_attribute()
+
+        # Create a second histogram based on the selected attribute
+        fig = px.histogram(
+            penguins,
+            x=selected_attribute,
+            title=f"Penguins {selected_attribute.replace('_', ' ').title()} Histogram",
+            color_discrete_sequence=["red"],  # Set bars to red
+        )
+
+        # Add black outline to each bar
+        fig.update_traces(marker_line_color="black", marker_line_width=1.5)
+
+        return fig
+
 
 ##### P2
-
-#  (P2.3) Use ui.input_selectize() to create a dropdown input to choose a column
-#  (P2.3) pass in three arguments:
-#  (P2.3) the name of the input (in quotes), e.g., "selected_attribute"
-#  (P2.3) the label for the input (in quotes)
-#  (P2.3) a list of options for the input (in square brackets)
-#  (P2.3)  e.g. ["bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"]
 
 #  (P2.4) Use ui.input_numeric() to create a numeric input for the number of Plotly histogram bins
 #  (P2.4) pass in two arguments:
