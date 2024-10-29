@@ -12,29 +12,35 @@ penguins = load_penguins()
 # Set up the UI and layout
 ui.page_opts(title="Penguins are Cool", fillable=True)
 
-# (P2.1) Add a Shiny UI sidebar for user interaction
+# Add a Shiny UI sidebar for user interaction
 with ui.sidebar(open="open"):
     ui.h2("Sidebar")
 
-    # (P2.1) Slider for filtering bill length data
+    # Slider for filtering bill length data
     ui.input_slider("slider", "Max Bill Length (mm)", min=33, max=60, value=45)
 
-    # (P2.3) Dropdown to choose a column attribute
+    # Dropdown to choose a column attribute
     ui.input_selectize(
         "selected_attribute",
         "Choose an Attribute",
         ["bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"],
     )
 
-    # (P2.4) Numeric input for number of Plotly histogram bins
+    # Numeric input for number of Plotly histogram bins
     ui.input_numeric("plotly_bin_count", "Number of Plotly Bins", value=10)
 
-    #  (P2.5) Use ui.input_slider() to create a slider input for the number of Seaborn bins
-    #  (P2.5) the minimum value for the input (as an integer)
-    #  (P2.5) the maximum value for the input (as an integer)
-    #  (P2.5) the default value for the input (as an integer)
+    # Slider for number of Seaborn bins
     ui.input_slider(
         "seaborn_bin_count", "Number of Seaborn Bins", min=5, max=50, value=20
+    )
+
+    # Checkbox group for species selection (affects only the scatter plot)
+    ui.input_checkbox_group(
+        "selected_species_list",
+        "Select Species to Display in Scatterplot",
+        ["Adelie", "Gentoo", "Chinstrap"],
+        selected=["Adelie", "Gentoo", "Chinstrap"],
+        inline=True,
     )
 
 # Define layout with render_plotly outputs for vertical stacking
@@ -42,7 +48,7 @@ with ui.layout_columns():
 
     @render_plotly
     def plot1():
-        # Filter data based on slider value
+        # Filter data based on slider value only
         filtered_penguins = penguins[penguins["bill_length_mm"] <= input.slider()]
 
         # Plotly histogram for bill length
@@ -72,15 +78,13 @@ with ui.layout_columns():
         return fig
 
 
-# Add the Seaborn histogram inside a card component
+# Add the Seaborn histogram inside a card component, with the scatter plot below it
 with ui.card():
     ui.card_header("Seaborn Histogram")
 
-    #  (P2.5) the name of the input (in quotes), e.g. "seaborn_bin_count"
-    #  (P2.5) the label for the input (in quotes)
     @render.plot
     def plot3():
-        # Create Seaborn histogram using the selected attribute and bin count
+        # Create Seaborn histogram using selected attribute and bin count
         fig, ax = plt.subplots()
         sns.histplot(
             data=penguins,
@@ -88,10 +92,33 @@ with ui.card():
             bins=input.seaborn_bin_count(),
             ax=ax,
         )
-        ax.set_title("Penguins Bill Length")
+        ax.set_title("Palmer Penguins")
         ax.set_xlabel(input.selected_attribute())
-        ax.set_ylabel("Count")
+        ax.set_ylabel("Number")
 
+        return fig
+
+
+# Scatter plot that responds to species selection, positioned below Seaborn histogram
+with ui.card():
+    ui.card_header("Plotly Scatterplot: Species")
+
+    @render_plotly
+    def plotly_scatterplot():
+        # Filter data based on selected species for scatter plot
+        filtered_penguins = penguins[
+            penguins["species"].isin(input.selected_species_list())
+        ]
+
+        # Create a scatter plot of body mass vs. bill depth, colored by species
+        fig = px.scatter(
+            filtered_penguins,
+            x="body_mass_g",
+            y="bill_depth_mm",
+            color="species",
+            title="Penguins Scatterplot: Body Mass vs. Bill Depth",
+            labels={"body_mass_g": "Body Mass (g)", "bill_depth_mm": "Bill Depth (mm)"},
+        )
         return fig
 
 
@@ -114,4 +141,3 @@ with ui.card():
 #  (P2.8) a keyword argument target= "_blank" to open the link in a new tab
 
 # When passing in multiple arguments to a function, separate them with commas.
-
