@@ -84,15 +84,17 @@ with ui.card():
 
     @render.plot
     def plot3():
-        # Create Seaborn histogram using selected attribute and bin count
+        # Create Seaborn histogram using selected attribute and bin count, with color by species
         fig, ax = plt.subplots()
         sns.histplot(
             data=penguins,
             x=input.selected_attribute(),
             bins=input.seaborn_bin_count(),
+            hue="species",  # Different color for each species
+            multiple="stack",  # Stack bars for easier comparison
             ax=ax,
         )
-        ax.set_title("Palmer Penguins")
+        ax.set_title("Palmer Penguins by Species")
         ax.set_xlabel(input.selected_attribute())
         ax.set_ylabel("Number")
 
@@ -123,14 +125,6 @@ with ui.card():
 
 
 ##### P2
-
-#  (P2.6) Use ui.input_checkbox_group() to create a checkbox group input to filter the species
-#  (P2.6) pass in five arguments:
-#  (P2.6) the name of the input (in quotes), e.g.  "selected_species_list"
-#  (P2.6) the label for the input (in quotes)
-#  (P2.6) a list of options for the input (in square brackets) as ["Adelie", "Gentoo", "Chinstrap"]
-#  (P2.6) a keyword argument selected= a list of selected options for the input (in square brackets)
-#  (P2.6) a keyword argument inline= a Boolean value (True or False) as you like
 
 #  (P2.7) Use ui.hr() to add a horizontal rule to the sidebar
 
