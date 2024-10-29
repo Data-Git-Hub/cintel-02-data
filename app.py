@@ -11,26 +11,40 @@ penguins = load_penguins()
 
 # Set up the UI and layout
 ui.page_opts(title="Penguins are Cool", fillable=True)
+
+# (P2.1) Add a Shiny UI sidebar for user interaction
+with ui.sidebar(
+    open="open"
+):  # (P2.1) Set open parameter to "open" to make sidebar open by default
+    # (P2.1) Add a slider for filtering bill length data
+    ui.input_slider(
+        "slider", "Max Bill Length (mm)", min=33, max=60, value=45
+    )  # Initial slider setup
+
+# (P2.1) Define the layout columns
 with ui.layout_columns():
 
     @render_plotly
     def plot1():
+        # Filter the data based on the slider value
+        filtered_penguins = penguins[
+            penguins["bill_length_mm"] <= input.slider()
+        ]  # Filter data dynamically
+
         # Create a histogram with black outlines
         fig = px.histogram(
-            penguins, x="bill_length_mm", title="Penguins Bill Length Histogram"
+            filtered_penguins,
+            x="bill_length_mm",
+            title="Penguins Bill Length Histogram",
         )
-        
+
         # Add black outline to each bar
         fig.update_traces(marker_line_color="black", marker_line_width=1.5)
-        
+
         return fig
 
-##### P2
-#  (P2.1) Add a Shiny UI sidebar for user interaction
-#  (P2.1) Use the ui.sidebar() function to create a sidebar
-#  (P2.1) Set the open parameter to "open" to make the sidebar open by default
-#  (P2.1) Use a with block to add content to the sidebar
 
+##### P2
 
 #  (P2.2) Use the ui.h2() function to add a 2nd level header to the sidebar
 #  (P2.2) pass in a string argument (in quotes) to set the header text to "Sidebar"
@@ -39,7 +53,7 @@ with ui.layout_columns():
 #  (P2.3) pass in three arguments:
 #  (P2.3) the name of the input (in quotes), e.g., "selected_attribute"
 #  (P2.3) the label for the input (in quotes)
-#  (P2.3) a list of options for the input (in square brackets) 
+#  (P2.3) a list of options for the input (in square brackets)
 #  (P2.3)  e.g. ["bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"]
 
 #  (P2.4) Use ui.input_numeric() to create a numeric input for the number of Plotly histogram bins
