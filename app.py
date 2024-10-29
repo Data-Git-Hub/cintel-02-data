@@ -29,6 +29,9 @@ with ui.sidebar(open="open"):
     # Numeric input for number of Plotly histogram bins
     ui.input_numeric("plotly_bin_count", "Number of Plotly Bins", value=10)
 
+    # Horizontal rule (P2.7) to separate sections
+    ui.hr()
+
     # Slider for number of Seaborn bins
     ui.input_slider(
         "seaborn_bin_count", "Number of Seaborn Bins", min=5, max=50, value=20
@@ -42,6 +45,12 @@ with ui.sidebar(open="open"):
         selected=["Adelie", "Gentoo", "Chinstrap"],
         inline=True,
     )
+
+    # Horizontal rule to separate sections
+    ui.hr()
+
+    # Add hyperlink to GitHub
+    ui.a("Data-Git-Hub", href="https://github.com/Data-Git-Hub", target="_blank")
 
 # Define layout with render_plotly outputs for vertical stacking
 with ui.layout_columns():
@@ -122,16 +131,3 @@ with ui.card():
             labels={"body_mass_g": "Body Mass (g)", "bill_depth_mm": "Bill Depth (mm)"},
         )
         return fig
-
-
-##### P2
-
-#  (P2.7) Use ui.hr() to add a horizontal rule to the sidebar
-
-#  (P2.8) Use ui.a() to add a hyperlink to the sidebar
-#  (P2.8) pass in two arguments:
-#  (P2.8) the text for the hyperlink (in quotes), e.g. "GitHub"
-#  (P2.8) a keyword argument href= the URL for the hyperlink (in quotes), e.g. your GitHub repo URL
-#  (P2.8) a keyword argument target= "_blank" to open the link in a new tab
-
-# When passing in multiple arguments to a function, separate them with commas.
