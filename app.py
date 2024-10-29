@@ -2,7 +2,6 @@ import plotly.express as px
 from shiny.express import input, ui
 from shinywidgets import render_plotly
 from palmerpenguins import load_penguins
-from shinywidgets import output_widget, render_widget, render_plotly
 import seaborn as sns
 from shiny import render
 
@@ -17,6 +16,7 @@ with ui.sidebar(
     open="open"
 ):  # (P2.1) Set open parameter to "open" to make sidebar open by default
     ui.h2("Sidebar")  # (P2.2) Add a second-level header with the text "Sidebar"
+
     # (P2.1) Add a slider for filtering bill length data
     ui.input_slider(
         "slider", "Max Bill Length (mm)", min=33, max=60, value=45
@@ -34,7 +34,14 @@ with ui.sidebar(
         ],  # List of options
     )
 
-# (P2.1) Define the layout columns
+    # (P2.4) Use ui.input_numeric() to create a numeric input for the number of Plotly histogram bins
+    ui.input_numeric(
+        "plotly_bin_count",  # Name of the input
+        "Number of Plotly Bins",  # Label for the input
+        value=10,  # Default value for the number of bins
+    )
+
+# Define layout with separate render_plotly outputs for vertical stacking
 with ui.layout_columns():
 
     @render_plotly
@@ -61,11 +68,15 @@ with ui.layout_columns():
         # Get the selected attribute from the dropdown input
         selected_attribute = input.selected_attribute()
 
+        # Use the numeric input for setting bins in plot2
+        bin_count = input.plotly_bin_count() if input.plotly_bin_count() else None
+
         # Create a second histogram based on the selected attribute
         fig = px.histogram(
             penguins,
             x=selected_attribute,
             title=f"Penguins {selected_attribute.replace('_', ' ').title()} Histogram",
+            nbins=bin_count,  # Apply user-specified bin count to plot2
             color_discrete_sequence=["red"],  # Set bars to red
         )
 
@@ -76,11 +87,6 @@ with ui.layout_columns():
 
 
 ##### P2
-
-#  (P2.4) Use ui.input_numeric() to create a numeric input for the number of Plotly histogram bins
-#  (P2.4) pass in two arguments:
-#  (P2.4) the name of the input (in quotes), e.g. "plotly_bin_count"
-#  (P2.4) the label for the input (in quotes)
 
 #  (P2.5) Use ui.input_slider() to create a slider input for the number of Seaborn bins
 #  (P2.5) pass in four arguments:
