@@ -29,7 +29,7 @@ with ui.sidebar(open="open"):
     # Numeric input for number of Plotly histogram bins
     ui.input_numeric("plotly_bin_count", "Number of Plotly Bins", value=10)
 
-    # Horizontal rule (P2.7) to separate sections
+    # Horizontal rule to separate sections
     ui.hr()
 
     # Slider for number of Seaborn bins
@@ -87,47 +87,62 @@ with ui.layout_columns():
         return fig
 
 
-# Add the Seaborn histogram inside a card component, with the scatter plot below it
-with ui.card():
-    ui.card_header("Seaborn Histogram")
+# Add the Seaborn histogram inside a card component
+with ui.layout_columns():
+    with ui.card():
+        ui.card_header("Seaborn Histogram")
 
-    @render.plot
-    def plot3():
-        # Create Seaborn histogram using selected attribute and bin count, with color by species
-        fig, ax = plt.subplots()
-        sns.histplot(
-            data=penguins,
-            x=input.selected_attribute(),
-            bins=input.seaborn_bin_count(),
-            hue="species",  # Different color for each species
-            multiple="stack",  # Stack bars for easier comparison
-            ax=ax,
-        )
-        ax.set_title("Palmer Penguins by Species")
-        ax.set_xlabel(input.selected_attribute())
-        ax.set_ylabel("Number")
+        @render.plot
+        def plot3():
+            fig, ax = plt.subplots()
+            sns.histplot(
+                data=penguins,
+                x=input.selected_attribute(),
+                bins=input.seaborn_bin_count(),
+                hue="species",
+                multiple="stack",
+                ax=ax,
+            )
+            ax.set_title("Palmer Penguins by Species")
+            ax.set_xlabel(input.selected_attribute())
+            ax.set_ylabel("Number")
+            return fig
 
-        return fig
+    # Scatter plot positioned next to Seaborn histogram
+    with ui.card():
+        ui.card_header("Plotly Scatterplot: Species")
+
+        @render_plotly
+        def plotly_scatterplot():
+            filtered_penguins = penguins[
+                penguins["species"].isin(input.selected_species_list())
+            ]
+            fig = px.scatter(
+                filtered_penguins,
+                x="body_mass_g",
+                y="bill_depth_mm",
+                color="species",
+                title="Penguins Scatterplot: Body Mass vs. Bill Depth",
+                labels={
+                    "body_mass_g": "Body Mass (g)",
+                    "bill_depth_mm": "Bill Depth (mm)",
+                },
+            )
+            return fig
 
 
-# Scatter plot that responds to species selection, positioned below Seaborn histogram
-with ui.card():
-    ui.card_header("Plotly Scatterplot: Species")
+# Display Data Table and Data Grid without selection or filters
+with ui.layout_columns():
+    with ui.card():
+        ui.card_header("Data Table")
 
-    @render_plotly
-    def plotly_scatterplot():
-        # Filter data based on selected species for scatter plot
-        filtered_penguins = penguins[
-            penguins["species"].isin(input.selected_species_list())
-        ]
+        @render.data_frame
+        def penguins_table():
+            return render.DataTable(penguins)  # Standard DataTable without filters
 
-        # Create a scatter plot of body mass vs. bill depth, colored by species
-        fig = px.scatter(
-            filtered_penguins,
-            x="body_mass_g",
-            y="bill_depth_mm",
-            color="species",
-            title="Penguins Scatterplot: Body Mass vs. Bill Depth",
-            labels={"body_mass_g": "Body Mass (g)", "bill_depth_mm": "Bill Depth (mm)"},
-        )
-        return fig
+    with ui.card():
+        ui.card_header("Data Grid")
+
+        @render.data_frame
+        def penguins_grid():
+            return render.DataGrid(penguins, selection_mode="none")  # No row selection
